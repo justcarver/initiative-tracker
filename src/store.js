@@ -26,15 +26,17 @@ const store = new Vuex.Store({
     addMonster(state, n) {
       state.monsters.push(n);
     },
-    startCombat(state) {
-      state.combat.isactive = true;
+    setCombat(state, n) {
+      state.combat.isactive = n;
     },
-    endCombat(state) {
-      state.combat.isactive = false;
+    setOrder(state, n) {
+      state.initiativeOrder = n;
     },
-    nextTurn(state) {
+    nextEntity(state) {
       const currentPlayer = state.initiativeOrder.shift();
       state.initiativeOrder.push(currentPlayer);
+    },
+    nextTurn(state) {
       if (state.combat.turn >= state.initiativeOrder.length) {
         state.combat.turn = 1;
         state.combat.round++;
