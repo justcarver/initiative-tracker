@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "AddPlayerForm",
+  name: "AddForm",
   props: {},
   data: () => {
     return {
