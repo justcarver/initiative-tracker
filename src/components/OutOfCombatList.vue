@@ -18,11 +18,11 @@ export default {
     return {};
   },
   computed: {
-    playerArray() {
-      return this.$store.getters.playerArray;
-    },
     npcArray() {
       return this.$store.getters.npcArray;
+    },
+    playerArray() {
+      return this.$store.getters.playerArray;
     }
   },
   methods: {},

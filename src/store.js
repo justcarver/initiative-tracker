@@ -39,14 +39,24 @@ const store = new Vuex.Store({
     addEntity(state, n) {
       state.entities.push(n);
     },
-    setCombat(state, n) {
-      state.combat.isactive = n;
+    toggleCombat(state) {
+      state.combat.isactive = !state.combat.isactive;
     },
     updateInitiative(state, n) {
       state.entities.forEach(entity => {
         if (entity.id == n.id) {
           entity.initiative = n.initiative;
         }
+      });
+    },
+    updateRandomization(state) {
+      state.entities.forEach(entity => {
+        if (entity.type !== "player") {
+          const initiative = Math.floor(Math.random() * 20) + 1;
+          const bonus = Math.floor((entity.dexterity - 10) / 2);
+          entity.initiative = initiative + bonus;
+        }
+        entity.random = Math.random();
       });
     },
     updateStatuses(state, n) {
@@ -68,6 +78,12 @@ const store = new Vuex.Store({
   actions: {
     addEntity(context, obj) {
       context.commit("addEntity", obj);
+    },
+    toggleCombat(context) {
+      if (!context.state.combat.isActive) {
+        context.commit("updateRandomization");
+      }
+      context.commit("toggleCombat");
     },
     updateInitiative(context, obj) {
       context.commit("updateInitiative", obj);
