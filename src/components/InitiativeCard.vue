@@ -1,10 +1,35 @@
 <template>
-  <div class="init-card" v-if="dead === false">
-    <p>{{ name }}</p>
-    <p v-if="dying">Dying...</p>
-    <p v-else>{{ initiative }}</p>
-    <button v-if="type === 'player'">Dying</button>
-    <button>Dead</button>
+  <div class="init-card">
+    <p>{{ entity.name }}</p>
+    <div v-if="editable && entity.type === 'player' && !combat">
+      <label for="initiative">Initiative:</label>
+      <input
+        type="number"
+        id="initiative"
+        v-model.number="entity.initiative"
+        v-on:keyup.enter="updateInitiative"
+        placeholder="Enter Initiative Rolled"
+      />
+    </div>
+    <span v-if="combat">Initiative: {{ entity.initiative }}</span>
+    <div class="currentStatus">
+      <span v-for="(status, index) in currentStatus" v-bind:key="index">
+        {{ status }}
+      </span>
+    </div>
+    <div class="statuses">
+      <ul>
+        <li v-for="(status, index) in statusList" v-bind:key="index">
+          <input
+            type="checkbox"
+            v-bind:id="status"
+            v-model="entity.statuses[status]"
+            v-on:change="updateStatus"
+          />
+          <label v-bind:for="status">{{ status }}</label>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -12,16 +37,39 @@
 export default {
   name: "InitiatieCard",
   props: {
-    type: String,
-    name: String,
-    initiative: Number,
-    dying: {
-      type: Boolean,
-      default: false
+    entity: Object,
+    editable: Boolean,
+    combat: Boolean
+  },
+  computed: {
+    statusList() {
+      return Object.keys(this.entity.statuses);
     },
-    dead: {
-      type: Boolean,
-      default: false
+    currentStatus() {
+      const statues = this.entity.statuses;
+      let tempArray = [];
+      for (const [key, value] of Object.entries(statues)) {
+        if (value) {
+          tempArray.push(key);
+        }
+      }
+      return tempArray;
+    }
+  },
+  methods: {
+    updateInitiative() {
+      const obj = {
+        id: this.entity.id,
+        initiative: this.entity.initiative
+      };
+      this.$store.dispatch("updateInitiative", obj);
+    },
+    updateStatus() {
+      const obj = {
+        id: this.entity.id,
+        statuses: this.entity.statuses
+      };
+      this.$store.dispatch("updateStatuses", obj);
     }
   }
 };
@@ -32,7 +80,7 @@ export default {
 .init-card {
   border: 1px grey solid;
 }
-h1 {
-  color: red;
+.statuses {
+  display: none;
 }
 </style>

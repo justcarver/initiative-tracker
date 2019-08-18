@@ -19,6 +19,10 @@
           <label for="name">Dex:</label>
           <input type="text" v-model="entity.dexterity" />
         </div>
+        <div>
+          <label for="creature-count">No. of Creatures:</label>
+          <input id="creature-count" type="number" v-model.number="count" />
+        </div>
       </div>
       <div>
         <button type="button" v-on:click="saveEntity" v-if="adding">
@@ -34,12 +38,14 @@
 </template>
 
 <script>
+import uuidv4 from "uuid/v4";
 export default {
   name: "AddWindow",
   props: {},
   data: function() {
     return {
       adding: false,
+      count: 1,
       entity: {}
     };
   },
@@ -71,10 +77,21 @@ export default {
           unconcious: false
         }
       };
+      this.count = 1;
     },
     saveEntity: function() {
-      if (this.entity.name !== "" && this.entity.type !== "") {
-        this.$store.dispatch("addEntity", this.entity);
+      if (
+        this.count > 0 &&
+        this.entity.name !== "" &&
+        this.entity.type !== ""
+      ) {
+        for (let i = 1; i <= this.count; i++) {
+          this.entity.id = uuidv4();
+          if (this.count > 1) {
+            this.entity.name = this.entity.name + " " + i;
+          }
+          this.$store.commit("addEntity", this.entity);
+        }
         this.resetEntity();
       } else {
         console.log("Not Saving...");

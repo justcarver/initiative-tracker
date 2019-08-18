@@ -42,12 +42,19 @@ const store = new Vuex.Store({
     setCombat(state, n) {
       state.combat.isactive = n;
     },
-    setOrder(state, n) {
-      state.initiativeOrder = n;
+    updateInitiative(state, n) {
+      state.entities.forEach(entity => {
+        if (entity.id == n.id) {
+          entity.initiative = n.initiative;
+        }
+      });
     },
-    nextEntity(state) {
-      const currentPlayer = state.initiativeOrder.shift();
-      state.initiativeOrder.push(currentPlayer);
+    updateStatuses(state, n) {
+      state.entities.forEach(entity => {
+        if (entity.id == n.id) {
+          entity.statuses = n.statuses;
+        }
+      });
     },
     nextTurn(state) {
       if (state.combat.turn >= state.initiativeOrder.length) {
@@ -61,24 +68,23 @@ const store = new Vuex.Store({
   actions: {
     addEntity(context, obj) {
       context.commit("addEntity", obj);
+    },
+    updateInitiative(context, obj) {
+      context.commit("updateInitiative", obj);
+    },
+    updateStatuses(context, obj) {
+      context.commit("updateStatuses", obj);
     }
   },
   getters: {
-    outOfCombatOrder: state => {
-      let playerArray = state.entities.filter(
-        entity => entity.type === "player"
-      );
-      let importantNpcs = state.entities.filter(
-        entity => entity.type === "importantNpc"
-      );
-      let npcs = state.entities.filter(
-        entity => entity.type !== "importantNpc" && entity.type !== "player"
-      );
-      return playerArray.concat(importantNpcs, npcs);
+    playerArray: state => {
+      return state.entities.filter(entity => entity.type === "player");
+    },
+    npcArray: state => {
+      return state.entities.filter(entity => entity.type !== "player");
     },
     combatOrder: state => {
-      let combatArray = [];
-      state.entities.forEach(x => combatArray.push(x));
+      const combatArray = Object.values(state.entities);
       combatArray.sort(compareValues("random", "desc"));
       combatArray.sort(compareValues("dexterity", "desc"));
       combatArray.sort(compareValues("initiative", "desc"));
