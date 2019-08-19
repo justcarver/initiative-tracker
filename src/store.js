@@ -67,7 +67,7 @@ const store = new Vuex.Store({
       });
     },
     nextTurn(state) {
-      if (state.combat.turn >= state.initiativeOrder.length) {
+      if (state.combat.turn >= state.entities.length) {
         state.combat.turn = 1;
         state.combat.round++;
       } else {
@@ -78,6 +78,9 @@ const store = new Vuex.Store({
   actions: {
     addEntity(context, obj) {
       context.commit("addEntity", obj);
+    },
+    nextTurn(context) {
+      context.commit("nextTurn");
     },
     toggleCombat(context) {
       if (!context.state.combat.isActive) {
