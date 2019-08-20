@@ -5,19 +5,19 @@
         <div>
           <label for="type">Type:</label>
           <select name="type" v-model="entity.type">
-            <option value="player">Player</option>
             <option value="monster">Monster</option>
+            <option value="player">Player</option>
             <option value="npc">NPC</option>
             <option value="impotant-npc">Important NPC</option>
           </select>
         </div>
         <div>
           <label for="name">Name:</label>
-          <input type="text" v-model="entity.name" />
+          <input id="name" type="text" v-model="entity.name" />
         </div>
         <div>
-          <label for="name">Dex:</label>
-          <input type="text" v-model="entity.dexterity" />
+          <label for="dex">Dex:</label>
+          <input id="dex" type="text" v-model.number="entity.dexterity" />
         </div>
         <div>
           <label for="creature-count">No. of Creatures:</label>
@@ -46,14 +46,16 @@ export default {
     return {
       adding: false,
       count: 1,
-      entity: {}
+      entity: {
+        type: "monster"
+      }
     };
   },
   methods: {
     resetEntity: function() {
       this.entity = {
         name: "",
-        type: "",
+        type: "monster",
         dexterity: 10,
         initiative: 0,
         statuses: {
@@ -63,6 +65,7 @@ export default {
           deafended: false,
           dying: false,
           exhaustion: false,
+          fled: false,
           fatigued: false,
           grappled: false,
           hidden: false,
@@ -85,13 +88,25 @@ export default {
         this.entity.name !== "" &&
         this.entity.type !== ""
       ) {
+        let tempArray = [];
         for (let i = 1; i <= this.count; i++) {
-          this.entity.id = uuidv4();
+          let name;
           if (this.count > 1) {
-            this.entity.name = this.entity.name + " " + i;
+            name = this.entity.name + " " + i;
+          } else {
+            name = this.entity.name;
           }
-          this.$store.commit("addEntity", this.entity);
+          let tempObj = {
+            id: uuidv4(),
+            name: name,
+            type: this.entity.type,
+            dexterity: this.entity.dexterity,
+            initiative: this.entity.initiative,
+            statuses: this.entity.statuses
+          };
+          tempArray.push(tempObj);
         }
+        this.$store.commit("addEntity", tempArray);
         this.resetEntity();
       } else {
         console.log("Not Saving...");

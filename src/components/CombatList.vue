@@ -11,7 +11,7 @@
       <h3>Round {{ roundNumber }} : Turn {{ turnNumber }}</h3>
       <div class="initiative-cards">
         <InitiativeCard
-          v-for="entity in currentList"
+          v-for="entity in currentOrder"
           v-bind:key="entity.id"
           v-bind:entity="entity"
           combat
@@ -32,7 +32,7 @@ export default {
     };
   },
   computed: {
-    combatArray() {
+    currentOrder() {
       return this.$store.getters.combatOrder;
     },
     inCombat() {
@@ -47,27 +47,13 @@ export default {
   },
   methods: {
     nextTurn() {
-      const entity = this.currentList.shift();
-      this.currentList.push(entity);
       this.$store.dispatch("nextTurn");
     },
     toggleCombat() {
-      this.currentList = this.$store.getters.combatOrder;
       this.$store.dispatch("toggleCombat");
-    }
-  },
-  created: function() {
-    this.currentList = this.$store.getters.combatOrder;
-    if (
-      this.$store.state.combat.turn > 1 ||
-      this.$store.state.combat.round > 1
-    ) {
-      const currentTurn = this.$store.state.combat.turn - 1;
-      const currentRound = this.$store.state.combat.round - 1;
-      const times = currentRound * this.currentList.length + currentTurn;
-      for (let i = 0; i < times; i++) {
-        const entity = this.currentList.shift();
-        this.currentList.push(entity);
+      if (!this.inCombat) {
+        this.$store.dispatch("removeDeadEntities");
+        this.$store.dispatch("resetCombat");
       }
     }
   },

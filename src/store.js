@@ -24,6 +24,7 @@ function compareValues(key, order = "asc") {
 const store = new Vuex.Store({
   state: {
     entities: [],
+    currentOrder: [],
     combat: {
       isactive: false,
       turn: 1,
@@ -31,13 +32,46 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    addEntity(state, n) {
+      n.forEach(entity => {
+        state.entities.push(entity);
+      });
+    },
     initializeStore(state) {
       if (localStorage.getItem("store")) {
         Object.assign(state, JSON.parse(localStorage.getItem("store")));
       }
     },
-    addEntity(state, n) {
-      state.entities.push(n);
+    nextTurn(state) {
+      if (state.combat.turn >= state.entities.length) {
+        state.combat.turn = 1;
+        state.combat.round++;
+      } else {
+        state.combat.turn++;
+      }
+      const entity = state.currentOrder.shift();
+      state.currentOrder.push(entity);
+    },
+    removeDeadEntities(state) {
+      state.entities = state.entities.filter(
+        entity => entity.type === "player" || !entity.statuses.dead
+      );
+    },
+    removeEntity(state, n) {
+      state.entities = state.entities.filter(entity => entity.id !== n.id);
+    },
+    resetCombat(state) {
+      state.combat = {
+        isactive: false,
+        turn: 1,
+        round: 1
+      };
+    },
+    sortEntities(state) {
+      state.currentOrder = state.entities;
+      state.currentOrder.sort(compareValues("random", "desc"));
+      state.currentOrder.sort(compareValues("dexterity", "desc"));
+      state.currentOrder.sort(compareValues("initiative", "desc"));
     },
     toggleCombat(state) {
       state.combat.isactive = !state.combat.isactive;
@@ -65,26 +99,30 @@ const store = new Vuex.Store({
           entity.statuses = n.statuses;
         }
       });
-    },
-    nextTurn(state) {
-      if (state.combat.turn >= state.entities.length) {
-        state.combat.turn = 1;
-        state.combat.round++;
-      } else {
-        state.combat.turn++;
-      }
     }
   },
   actions: {
     addEntity(context, obj) {
-      context.commit("addEntity", obj);
+      obj.forEach(entity => {
+        context.commit("addEntity", entity);
+      });
     },
     nextTurn(context) {
       context.commit("nextTurn");
     },
+    removeDeadEntities(context) {
+      context.commit("removeDeadEntities");
+    },
+    removeEntity(context, obj) {
+      context.commit("removeEntity", obj);
+    },
+    resetCombat(context) {
+      context.commit("resetCombat");
+    },
     toggleCombat(context) {
       if (!context.state.combat.isActive) {
         context.commit("updateRandomization");
+        context.commit("sortEntities");
       }
       context.commit("toggleCombat");
     },
@@ -103,11 +141,7 @@ const store = new Vuex.Store({
       return state.entities.filter(entity => entity.type !== "player");
     },
     combatOrder: state => {
-      const combatArray = Object.values(state.entities);
-      combatArray.sort(compareValues("random", "desc"));
-      combatArray.sort(compareValues("dexterity", "desc"));
-      combatArray.sort(compareValues("initiative", "desc"));
-      return combatArray;
+      return state.currentOrder;
     }
   }
 });
