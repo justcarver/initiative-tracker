@@ -67,7 +67,7 @@ const store = new Vuex.Store({
         round: 1
       };
     },
-    sortEntities(state) {
+    sortCurrentOrder(state) {
       state.currentOrder = state.entities;
       state.currentOrder.sort(compareValues("random", "desc"));
       state.currentOrder.sort(compareValues("dexterity", "desc"));
@@ -99,6 +99,15 @@ const store = new Vuex.Store({
           entity.statuses = n.statuses;
         }
       });
+    },
+    updateTurns(state) {
+      const turnNo = state.combat.turn - 1;
+      const roundNo = (state.combat.round - 1) * state.entities.length;
+      const total = roundNo + turnNo;
+      for (let i = 0; i < total; i++) {
+        const entity = state.currentOrder.shift();
+        state.currentOrder.push(entity);
+      }
     }
   },
   actions: {
@@ -106,6 +115,8 @@ const store = new Vuex.Store({
       obj.forEach(entity => {
         context.commit("addEntity", entity);
       });
+      context.commit("sortCurrentOrder");
+      context.commit("updateTurns");
     },
     nextTurn(context) {
       context.commit("nextTurn");
@@ -122,7 +133,7 @@ const store = new Vuex.Store({
     toggleCombat(context) {
       if (!context.state.combat.isActive) {
         context.commit("updateRandomization");
-        context.commit("sortEntities");
+        context.commit("sortCurrentOrder");
       }
       context.commit("toggleCombat");
     },

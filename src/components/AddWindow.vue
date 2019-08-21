@@ -5,8 +5,8 @@
         <div>
           <label for="type">Type:</label>
           <select name="type" v-model="entity.type">
-            <option value="monster">Monster</option>
             <option value="player">Player</option>
+            <option value="monster">Monster</option>
             <option value="npc">NPC</option>
             <option value="impotant-npc">Important NPC</option>
           </select>
@@ -17,20 +17,28 @@
         </div>
         <div>
           <label for="dex">Dex:</label>
-          <input id="dex" type="text" v-model.number="entity.dexterity" />
+          <input id="dex" type="number" v-model.number="entity.dexterity" />
         </div>
-        <div>
+        <div v-if="inCombat">
+          <label for="initiative">Initiative:</label>
+          <input
+            id="initiative"
+            type="number"
+            v-model.number="entity.initiative"
+          />
+        </div>
+        <div v-if="entity.type !== 'player'">
           <label for="creature-count">No. of Creatures:</label>
           <input id="creature-count" type="number" v-model.number="count" />
         </div>
       </div>
       <div>
         <button type="button" v-on:click="saveEntity" v-if="adding">
-          Save
+          Save {{ entity.type }}
         </button>
         <button type="button" v-on:click="toggleAdding">
-          <span v-if="adding">Cancel</span>
-          <span v-else>Add</span>
+          <span v-if="adding">Cancel Adding</span>
+          <span v-else>Add New Entity</span>
         </button>
       </div>
     </form>
@@ -51,13 +59,18 @@ export default {
       }
     };
   },
+  computed: {
+    inCombat() {
+      return this.$store.state.combat.isactive;
+    }
+  },
   methods: {
     resetEntity: function() {
       this.entity = {
-        name: "",
+        name: undefined,
         type: "monster",
         dexterity: 10,
-        initiative: 0,
+        initiative: undefined,
         statuses: {
           blinded: false,
           charmed: false,
