@@ -1,15 +1,10 @@
 <template>
   <div class="combat-list">
-    <div>
-      <button v-on:click="toggleCombat">
-        <span v-if="inCombat === false">Start Combat</span>
-        <span v-if="inCombat">End Combat</span>
-      </button>
-      <button v-if="inCombat" v-on:click="nextTurn()">Next Turn</button>
-    </div>
     <div v-if="inCombat">
-      <h3>Round {{ roundNumber }} : Turn {{ turnNumber }}</h3>
-      <div class="initiative-cards">
+      <div class="text-xl font-bold">
+        Round {{ roundNumber }} : Turn {{ turnNumber }}
+      </div>
+      <div class="flex flex-col items-center">
         <InitiativeCard
           v-for="entity in currentOrder"
           v-bind:key="entity.id"
@@ -17,6 +12,29 @@
           combat
         />
       </div>
+    </div>
+    <div class="flex justify-around">
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        v-if="inCombat === false"
+        v-on:click="toggleCombat"
+      >
+        Start Combat
+      </button>
+      <button
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        v-if="inCombat"
+        v-on:click="toggleCombat"
+      >
+        End Combat
+      </button>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        v-if="inCombat"
+        v-on:click="nextTurn()"
+      >
+        Next Turn
+      </button>
     </div>
   </div>
 </template>
@@ -26,11 +44,6 @@ import InitiativeCard from "@/components/InitiativeCard.vue";
 export default {
   name: "CombatList",
   props: {},
-  data: function() {
-    return {
-      currentList: []
-    };
-  },
   computed: {
     currentOrder() {
       return this.$store.getters.combatOrder;

@@ -1,11 +1,17 @@
 <template>
-  <div class="out-of-combat-list">
-    <div v-for="entity in playerArray" v-bind:key="entity.id">
-      <InitiativeCard v-bind:entity="entity" editable />
-    </div>
-    <div v-for="entity in npcArray" v-bind:key="entity.id">
-      <InitiativeCard v-bind:entity="entity" editable />
-    </div>
+  <div class="flex flex-col items-center">
+    <InitiativeCard
+      v-for="entity in playerArray"
+      v-bind:key="entity.id"
+      v-bind:entity="entity"
+      editable
+    />
+    <InitiativeCard
+      v-for="entity in npcArray"
+      v-bind:key="entity.id"
+      v-bind:entity="entity"
+      editable
+    />
   </div>
 </template>
 
