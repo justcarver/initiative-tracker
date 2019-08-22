@@ -1,9 +1,28 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <nav class="flex items-center justify-between flex-wrap bg-blue-500 p-6">
+      <div class="flex items-center flex-shrink-0 text-white mr-6">
+        <span class="font-semibold text-xl tracking-tight">
+          Initiative Tracker
+        </span>
+      </div>
+      <div class="flex items-center">
+        <div class="text-sm">
+          <router-link
+            to="/"
+            class="block inline-block lg:mt-0 text-blue-200 hover:text-white mr-4"
+          >
+            Home
+          </router-link>
+          <router-link
+            to="/about"
+            class="block inline-block lg:mt-0 text-blue-200 hover:text-white mr-4"
+          >
+            About
+          </router-link>
+        </div>
+      </div>
+    </nav>
     <router-view />
   </div>
 </template>

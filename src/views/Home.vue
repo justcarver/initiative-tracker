@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <AddWindow />
-    <CombatList />
     <OutOfCombatList v-if="inCombat === false" />
+    <CombatList />
   </div>
 </template>
 
