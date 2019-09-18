@@ -210,7 +210,7 @@ export default {
             type: this.entity.type,
             dexterity: this.entity.dexterity,
             initiative: this.entity.initiative,
-            statuses: this.entity.statuses
+            statuses: JSON.parse(JSON.stringify(this.entity.statuses))
           };
           tempArray.push(tempObj);
         }

@@ -1,18 +1,5 @@
 <template>
   <div class="combat-list">
-    <div v-if="inCombat">
-      <div class="text-xl font-bold">
-        Round {{ roundNumber }} : Turn {{ turnNumber }}
-      </div>
-      <div class="flex flex-col items-center">
-        <InitiativeCard
-          v-for="entity in currentOrder"
-          v-bind:key="entity.id"
-          v-bind:entity="entity"
-          combat
-        />
-      </div>
-    </div>
     <div class="flex justify-around">
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -35,6 +22,19 @@
       >
         Next Turn
       </button>
+    </div>
+    <div v-if="inCombat">
+      <div class="text-xl font-bold">
+        Round {{ roundNumber }} : Turn {{ turnNumber }}
+      </div>
+      <div class="flex flex-col items-center">
+        <InitiativeCard
+          v-for="entity in currentOrder"
+          v-bind:key="entity.id"
+          v-bind:entity="entity"
+          combat
+        />
+      </div>
     </div>
   </div>
 </template>
