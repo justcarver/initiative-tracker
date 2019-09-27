@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-sm w-1/2 rounded overflow-hidden shadow m-2">
+  <div class="max-w-sm w-3/4 rounded overflow-hidden shadow m-2">
     <div class="px-6 py-4">
       <div class="font-bold text-lg mb-2">{{ entity.name }}</div>
       <div
@@ -40,7 +40,7 @@
       <div class="flex justify-between">
         <button
           v-on:click="toggleStatus"
-          class="relative bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+          class="relative bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded"
         >
           <!--
           <svg
@@ -55,7 +55,7 @@
           Statuses
         </button>
         <button
-          class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
+          class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded"
           v-if="!combat"
           v-on:click="removeEntity"
         >
@@ -138,6 +138,7 @@ export default {
         statuses: this.entity.statuses
       };
       this.$store.dispatch("updateStatuses", obj);
+      this.statusOpen = false;
     }
   }
 };
